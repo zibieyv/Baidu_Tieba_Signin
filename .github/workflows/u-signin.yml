@@ -1,0 +1,28 @@
+name: Baidu Tieba Auto Sign
+
+on:
+  schedule:
+    # 北京时间凌晨 3 点自动运行 (UTC 19:00)
+    - cron: '0 19 * * *'
+  workflow_dispatch: # 允许你手动点击运行
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run sign-in script
+        env:
+          COOKIE: ${{ secrets.COOKIE }}
+        run: python Spiders/baidutieba_signin.py
