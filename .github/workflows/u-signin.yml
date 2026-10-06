@@ -4,7 +4,7 @@ on:
   schedule:
     # 北京时间凌晨 3 点自动运行 (UTC 19:00)
     - cron: '0 19 * * *'
-  workflow_dispatch: # 允许手动点击运行
+  workflow_dispatch: # 允许你手动点击运行
 
 jobs:
   build:
@@ -16,11 +16,13 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          # 关键修复1：降到 Python 3.8，完美兼容老代码的 collections.Mapping 问题
+          python-version: '3.8'
 
       - name: Install dependencies
         run: |
-          pip install urllib3==1.26.18 six
+          # 关键修复2：强制安装兼容版本 urllib3 和 six，并安装 requests
+          pip install urllib3==1.26.18 six requests
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
       - name: Run sign-in script
